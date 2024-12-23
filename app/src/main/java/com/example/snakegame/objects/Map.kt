@@ -1,4 +1,4 @@
-package com.example.snakegame.`object`
+package com.example.snakegame.objects
 
 class Map {
     companion object {

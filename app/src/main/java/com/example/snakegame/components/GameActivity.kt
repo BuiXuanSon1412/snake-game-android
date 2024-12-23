@@ -1,4 +1,4 @@
-package com.example.snakegame.component
+package com.example.snakegame.components
 
 import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
@@ -8,14 +8,16 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import com.example.snakegame.databinding.ActivityGameBinding
-import com.example.snakegame.`object`.Food
-import com.example.snakegame.`object`.Snake
+import com.example.snakegame.objects.Food
+import com.example.snakegame.objects.Game
+import com.example.snakegame.objects.Snake
 import kotlinx.android.synthetic.main.activity_game.*
 import kotlinx.coroutines.*
 import kotlin.math.abs
 
 class GameActivity : AppCompatActivity() {
     private lateinit var binding: ActivityGameBinding
+    private lateinit var game: Game
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityGameBinding.inflate(layoutInflater)
@@ -24,6 +26,7 @@ class GameActivity : AppCompatActivity() {
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         supportActionBar?.hide()
 
+        canvas.mapIndex = intent.getIntExtra("mapSelection", 0)
         // touch control
 
         open class OnSwipeTouchListener : View.OnTouchListener {
@@ -93,6 +96,9 @@ class GameActivity : AppCompatActivity() {
             open fun onSwipeTop() {}
             open fun onSwipeBottom() {}
         }
+        binding.canvas.post {
+            game = Game(binding.canvas.mapIndex, binding.canvas.width, binding.canvas.height)
+        }
 
         binding.canvas.setOnTouchListener(object : OnSwipeTouchListener() {
 
@@ -127,24 +133,27 @@ class GameActivity : AppCompatActivity() {
                     when (Snake.direction) {
                         "up" -> {
                             // create new head position
-                            Snake.headY -= 50
-                            if (!Snake.possibleMove()) {
+                            Snake.headY -= game.pixelSize
+                            if (Snake.headY < 0) Snake.headY += binding.canvas.height
+                            if (game.collided()) {
                                 Snake.alive = false
                                 Snake.reset()
                             }
                         }
                         "down" -> {
                             // create new head position
-                            Snake.headY += 50
-                            if (!Snake.possibleMove()) {
+                            Snake.headY += game.pixelSize
+                            if (Snake.headY > binding.canvas.height) Snake.headY -= binding.canvas.height
+                            if (game.collided()) {
                                 Snake.alive = false
                                 Snake.reset()
                             }
                         }
                         "left" -> {
                             // create new head position
-                            Snake.headX -= 50
-                            if (!Snake.possibleMove()) {
+                            Snake.headX -= game.pixelSize
+                            if (Snake.headX < 0) Snake.headX += binding.canvas.width
+                            if (game.collided()) {
                                 Snake.alive = false
                                 Snake.reset()
                             }
@@ -152,8 +161,9 @@ class GameActivity : AppCompatActivity() {
                         }
                         "right" -> {
                             // create new head position
-                            Snake.headX += 50
-                            if (!Snake.possibleMove()) {
+                            Snake.headX += game.pixelSize
+                            if (Snake.headX > binding.canvas.width) Snake.headX -= binding.canvas.width
+                            if (game.collided()) {
                                 Snake.alive = false
                                 Snake.reset()
                             }
@@ -163,14 +173,14 @@ class GameActivity : AppCompatActivity() {
                     Snake.bodyParts.add(arrayOf(Snake.headX, Snake.headY))
 
                     // delete tail if not eat
-                    if (Snake.headX == Food.posX && Snake.headY == Food.posY)
+                    if (game.eaten())
                         Food.generate()
                     else
                         Snake.bodyParts.removeAt(0)
 
                     //game speed in millisecond
                     canvas.invalidate()
-                    delay(150)
+                    delay(300)
                 }
             }
         }

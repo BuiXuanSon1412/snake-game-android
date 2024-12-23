@@ -1,4 +1,4 @@
-package com.example.snakegame.component
+package com.example.snakegame.components
 
 import android.content.Intent
 import android.os.Bundle
@@ -19,9 +19,29 @@ class StartActivity : AppCompatActivity() {
         binding.canvas2.mapIndex = 1
         binding.canvas3.mapIndex = 2
 
+        var mapSelection: Int? = null
+        binding.canvas1.setOnClickListener() {
+            binding.canvas1.changeSelectingState(true)
+            binding.canvas2.changeSelectingState(false)
+            binding.canvas3.changeSelectingState(false)
+            mapSelection = 0
+        }
+        binding.canvas2.setOnClickListener() {
+            binding.canvas1.changeSelectingState(false)
+            binding.canvas2.changeSelectingState(true)
+            binding.canvas3.changeSelectingState(false)
+            mapSelection = 1
+        }
+        binding.canvas3.setOnClickListener() {
+            binding.canvas1.changeSelectingState(false)
+            binding.canvas2.changeSelectingState(false)
+            binding.canvas3.changeSelectingState(true)
+            mapSelection = 2
+        }
         // Set click listener for Button 1 to navigate to NextActivity
         binding.button1.setOnClickListener {
             val intent = Intent(this, GameActivity::class.java)
+            intent.putExtra("mapSelection", mapSelection)
             startActivity(intent)
         }
 

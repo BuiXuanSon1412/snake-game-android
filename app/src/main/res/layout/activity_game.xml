@@ -5,14 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#000000"
-    tools:context="com.example.snakegame.component.GameActivity">
+    tools:context="com.example.snakegame.components.GameActivity">
 
-    <com.example.snakegame.graphic.GameCanvas
+    <com.example.snakegame.graphics.GameCanvas
         android:id="@+id/canvas"
         android:layout_width="match_parent"
         android:layout_height="400dp"
         android:layout_marginStart="6dp"
-        android:layout_marginTop="76dp"
+        android:layout_marginTop="100dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -20,6 +20,7 @@
         android:id="@+id/button_right"
         android:layout_width="50dp"
         android:layout_height="50dp"
+        android:contentDescription="@string/button_to_control_snake_move_right"
         app:layout_constraintStart_toEndOf="@+id/button_up"
         app:layout_constraintTop_toBottomOf="@+id/button_up"
         app:srcCompat="?android:attr/listChoiceIndicatorSingle" />
@@ -30,6 +31,7 @@
         android:layout_height="50dp"
         android:layout_marginStart="268dp"
         android:layout_marginTop="52dp"
+        android:contentDescription="@string/button_to_control_snake_move_up"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/canvas"
         app:srcCompat="?android:attr/listChoiceIndicatorSingle" />
@@ -38,6 +40,7 @@
         android:id="@+id/button_left"
         android:layout_width="50dp"
         android:layout_height="50dp"
+        android:contentDescription="@string/button_to_control_snake_move_left"
         app:layout_constraintEnd_toStartOf="@+id/button_up"
         app:layout_constraintTop_toBottomOf="@+id/button_up"
         app:srcCompat="?android:attr/listChoiceIndicatorSingle" />
@@ -46,6 +49,7 @@
         android:id="@+id/button_down"
         android:layout_width="50dp"
         android:layout_height="50dp"
+        android:contentDescription="@string/button_to_control_snake_move_down"
         app:layout_constraintStart_toEndOf="@+id/button_left"
         app:layout_constraintTop_toBottomOf="@+id/button_left"
         app:srcCompat="?android:attr/listChoiceIndicatorSingle" />

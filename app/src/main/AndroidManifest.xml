@@ -9,10 +9,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SnaakeGame">
         <activity
-            android:name=".component.GameActivity"
+            android:name=".components.GameActivity"
             android:exported="false" />
         <activity
-            android:name=".component.StartActivity"
+            android:name=".components.StartActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

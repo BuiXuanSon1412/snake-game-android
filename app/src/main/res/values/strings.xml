@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">SnakeGame</string>
+    <string name="play">Play</string>
+    <string name="quit">Quit</string>
+    <string name="button_to_control_snake_move_right">Button to control Snake: move right</string>
+    <string name="button_to_control_snake_move_up">Button to control Snake: move up</string>
+    <string name="button_to_control_snake_move_left">Button to control Snake: move left</string>
+    <string name="button_to_control_snake_move_down">Button to control Snake: move down</string>
 </resources>

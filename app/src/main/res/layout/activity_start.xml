@@ -12,10 +12,10 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center"
-        android:layout_marginBottom="16dp">
+        android:layout_marginBottom="50dp">
 
         <!-- Canvas 1 -->
-        <com.example.snakegame.graphic.MapCanvas
+        <com.example.snakegame.graphics.MapCanvas
             android:id="@+id/canvas1"
             android:layout_width="105dp"
             android:layout_height="105dp"
@@ -23,7 +23,7 @@
             android:background="#FF0000" />
 
         <!-- Canvas 2 -->
-        <com.example.snakegame.graphic.MapCanvas
+        <com.example.snakegame.graphics.MapCanvas
             android:id="@+id/canvas2"
             android:layout_width="105dp"
             android:layout_height="105dp"
@@ -31,7 +31,7 @@
             android:background="#00FF00" />
 
         <!-- Canvas 3 -->
-        <com.example.snakegame.graphic.MapCanvas
+        <com.example.snakegame.graphics.MapCanvas
             android:id="@+id/canvas3"
             android:layout_width="105dp"
             android:layout_height="105dp"
@@ -49,14 +49,14 @@
             android:id="@+id/button1"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
-            android:text="Play"
+            android:text="@string/play"
             android:layout_marginBottom="8dp" />
 
         <Button
             android:id="@+id/button2"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
-            android:text="Quit" />
+            android:text="@string/quit" />
     </LinearLayout>
 
 </LinearLayout>
