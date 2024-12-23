@@ -1,0 +1,7 @@
+# Simplified Snake Game
+
+## Description
+
+## 
+
+
