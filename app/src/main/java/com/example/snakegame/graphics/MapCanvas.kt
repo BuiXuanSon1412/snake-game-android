@@ -41,7 +41,7 @@ open class MapCanvas @JvmOverloads constructor(
         return false
     }
 
-    private fun drawWall(canvas: Canvas, index: Int) {
+    protected fun drawWall(canvas: Canvas, index: Int) {
         val map = Map.mapMatrix[index]
         val wall = Paint()
         wall.color = Color.BLACK

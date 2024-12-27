@@ -26,9 +26,11 @@ class GameActivity : AppCompatActivity() {
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         supportActionBar?.hide()
 
-        canvas.mapIndex = intent.getIntExtra("mapSelection", 0)
+        val canvas = binding.canvas
+        var mapIndex = intent.getIntExtra("mapSelection", 0)
+        canvas.mapIndex = mapIndex
+        game = Game(mapIndex, canvas.width, canvas.height)
         // touch control
-
         open class OnSwipeTouchListener : View.OnTouchListener {
 
             private val gestureDetector = GestureDetector(GestureListener())
@@ -96,11 +98,9 @@ class GameActivity : AppCompatActivity() {
             open fun onSwipeTop() {}
             open fun onSwipeBottom() {}
         }
-        binding.canvas.post {
-            game = Game(binding.canvas.mapIndex, binding.canvas.width, binding.canvas.height)
-        }
 
-        binding.canvas.setOnTouchListener(object : OnSwipeTouchListener() {
+
+        canvas.setOnTouchListener(object : OnSwipeTouchListener() {
 
             override fun onSwipeLeft() {
                 Snake.alive = true
@@ -132,51 +132,52 @@ class GameActivity : AppCompatActivity() {
                 while (Snake.alive) {
                     when (Snake.direction) {
                         "up" -> {
+                            println("move up")
                             // create new head position
-                            Snake.headY -= game.pixelSize
-                            if (Snake.headY < 0) Snake.headY += binding.canvas.height
-                            if (game.collided()) {
-                                Snake.alive = false
-                                Snake.reset()
-                            }
+                            Snake.headY -= 1
+                            if (Snake.headY < 0) Snake.headY += Game.boardSize
+
                         }
                         "down" -> {
+                            println("move down")
                             // create new head position
-                            Snake.headY += game.pixelSize
-                            if (Snake.headY > binding.canvas.height) Snake.headY -= binding.canvas.height
-                            if (game.collided()) {
-                                Snake.alive = false
-                                Snake.reset()
-                            }
+                            Snake.headY += 1
+                            if (Snake.headY >= Game.boardSize) Snake.headY -= Game.boardSize
+
                         }
                         "left" -> {
+                            println("move left")
                             // create new head position
-                            Snake.headX -= game.pixelSize
-                            if (Snake.headX < 0) Snake.headX += binding.canvas.width
-                            if (game.collided()) {
-                                Snake.alive = false
-                                Snake.reset()
-                            }
+                            Snake.headX -= 1
+                            if (Snake.headX < 0) Snake.headX += Game.boardSize
+
 
                         }
                         "right" -> {
+                            println("move right")
                             // create new head position
-                            Snake.headX += game.pixelSize
-                            if (Snake.headX > binding.canvas.width) Snake.headX -= binding.canvas.width
-                            if (game.collided()) {
-                                Snake.alive = false
-                                Snake.reset()
-                            }
-                        }
-                    }
-                    // convert head to body
-                    Snake.bodyParts.add(arrayOf(Snake.headX, Snake.headY))
+                            Snake.headX += 1
+                            if (Snake.headX >= Game.boardSize) Snake.headX -= Game.boardSize
 
-                    // delete tail if not eat
-                    if (game.eaten())
-                        Food.generate()
-                    else
-                        Snake.bodyParts.removeAt(0)
+                        }
+
+                    }
+                    if (game.collided()) {
+                        Snake.alive = false
+                        game.reset()
+                    }
+                    else {
+                        // convert head to body
+                        Snake.bodyParts.add(Pair(Snake.headX, Snake.headY))
+
+                        if (game.eaten()) {
+                            game.generateFood()
+                        }
+                        else
+                            Snake.bodyParts.removeAt(0)
+                    }
+
+
 
                     //game speed in millisecond
                     canvas.invalidate()
