@@ -62,7 +62,7 @@ class Game (private var mapIndex :Int, private val widthMap: Int, val heightMap:
     }
 
     fun eaten(): Boolean {
-        if (Snake.headX + 1 == Food.posX && Snake.headY + 1 == Food.posY) {
+        if (Snake.headX == Food.posX && Snake.headY == Food.posY) {
             score += 20
             return true
         }

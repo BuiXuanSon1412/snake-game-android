@@ -7,6 +7,8 @@ import android.os.Bundle
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
+import androidx.appcompat.app.AlertDialog
+import com.example.snakegame.R
 import com.example.snakegame.databinding.ActivityGameBinding
 import com.example.snakegame.objects.Food
 import com.example.snakegame.objects.Game
@@ -185,7 +187,9 @@ class GameActivity : AppCompatActivity() {
                 }
             }
         }
-
+        binding.buttonSettings.setOnClickListener {
+            openSettingsFragment()
+        }
         binding.buttonUp.setOnClickListener {
             Snake.alive = true
             if (Snake.direction != "down")
@@ -207,4 +211,16 @@ class GameActivity : AppCompatActivity() {
                 Snake.direction = "right"
         }
     }
+    // Method to replace the current fragment with SettingsFragment
+    private fun openSettingsFragment() {
+        // Create a new instance of the SettingsFragment
+        val settingsFragment = SettingsFragment()
+
+        // Replace the current fragment with the new SettingsFragment
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, settingsFragment) // Replace with the container ID
+            .addToBackStack(null) // Add this transaction to the back stack
+            .commit()
+    }
+
 }
