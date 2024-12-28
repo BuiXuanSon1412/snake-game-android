@@ -17,7 +17,18 @@
         android:contentDescription="@string/button_to_setting"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
+    <TextView
+        android:id="@+id/scoreTextView"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginTop="0dp"
+        android:text="Score: 0"
+        android:textSize="30dp"
+        android:layout_marginBottom="32dp"
+        android:layout_centerHorizontal="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
     <com.example.snakegame.graphics.GameCanvas
         android:id="@+id/canvas"
         android:layout_width="0dp"

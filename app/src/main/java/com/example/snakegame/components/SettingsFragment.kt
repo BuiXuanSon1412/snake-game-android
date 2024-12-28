@@ -22,6 +22,7 @@ class SettingsFragment : Fragment() {
 
         binding.buttonQuit.setOnClickListener {
             val intent = Intent(requireContext(), StartActivity::class.java)
+            activity?.finish()
             startActivity(intent)
         }
 

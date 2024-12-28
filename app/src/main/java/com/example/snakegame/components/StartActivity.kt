@@ -40,7 +40,6 @@ class StartActivity : AppCompatActivity() {
         }
         // Set click listener for Button 1 to navigate to NextActivity
         binding.button1.setOnClickListener {
-            println("${mapSelection}")
             val intent = Intent(this, GameActivity::class.java)
             intent.putExtra("mapSelection", mapSelection)
             startActivity(intent)
