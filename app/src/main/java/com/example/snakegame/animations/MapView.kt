@@ -1,4 +1,4 @@
-package com.example.snakegame.graphics
+package com.example.snakegame.animations
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -7,21 +7,31 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.View
-import com.example.snakegame.objects.Game
-import com.example.snakegame.objects.Map
+import com.example.snakegame.engine.Game
+import com.example.snakegame.engine.Map
+import kotlin.properties.Delegates
 
-open class MapCanvas @JvmOverloads constructor(
+open class MapView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
-    protected var pixelSize: Float? = null
+    protected var pixelSize by Delegates.notNull<Float>()
     private var border: Boolean = false
-    var mapIndex: Int = 0
+    var mapIndex: Int = -1          // default: unspecified map
+
+    init {
+        // Add a pre-draw listener to the ViewTreeObserver
+        viewTreeObserver.addOnPreDrawListener {
+            pixelSize = this.width / Game.boardSize.toFloat()
+            true
+        }
+    }
+
     @SuppressLint("DrawAllocation")
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        pixelSize = this.width / Game.boardSize.toFloat()
+        //pixelSize = this.width / Game.boardSize.toFloat()
         canvas.drawColor(Color.GRAY)
         // draw map
         drawWall(canvas, mapIndex)
@@ -41,7 +51,7 @@ open class MapCanvas @JvmOverloads constructor(
         return false
     }
 
-    protected fun drawWall(canvas: Canvas, index: Int) {
+    private fun drawWall(canvas: Canvas, index: Int) {
         val map = Map.mapMatrix[index]
         val wall = Paint()
         wall.color = Color.BLACK
@@ -49,15 +59,15 @@ open class MapCanvas @JvmOverloads constructor(
             for (col in map[row].indices) {
                 if (map[row][col] == 1) {
                     canvas.drawRect(
-                        col * pixelSize!!,
-                        row * pixelSize!!,
-                        col * pixelSize!! + pixelSize!!,
-                        row * pixelSize!! + pixelSize!!, wall)
+                        col * pixelSize,
+                        row * pixelSize,
+                        col * pixelSize + pixelSize,
+                        row * pixelSize + pixelSize, wall)
                 }
             }
         }
     }
-    public fun changeSelectingState(state: Boolean) {
+    fun changeSelectingState(state: Boolean) {
         border = state
         invalidate()
     }

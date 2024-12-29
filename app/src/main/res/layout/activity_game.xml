@@ -29,8 +29,8 @@
         android:layout_centerHorizontal="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
-    <com.example.snakegame.graphics.GameCanvas
-        android:id="@+id/canvas"
+    <FrameLayout
+        android:id="@+id/game_view_container"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="6dp"
@@ -58,7 +58,7 @@
         android:layout_marginTop="52dp"
         android:contentDescription="@string/button_to_control_snake_move_up"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/canvas"
+        app:layout_constraintTop_toBottomOf="@+id/game_view_container"
         app:srcCompat="?android:attr/listChoiceIndicatorSingle" />
 
     <ImageButton

@@ -16,7 +16,7 @@
         android:layout_marginBottom="50dp">
 
         <!-- Canvas 1 -->
-        <com.example.snakegame.graphics.MapCanvas
+        <com.example.snakegame.animations.MapView
             android:id="@+id/canvas1"
             android:layout_width="105dp"
             android:layout_height="105dp"
@@ -24,7 +24,7 @@
             android:background="#FF0000" />
 
         <!-- Canvas 2 -->
-        <com.example.snakegame.graphics.MapCanvas
+        <com.example.snakegame.animations.MapView
             android:id="@+id/canvas2"
             android:layout_width="105dp"
             android:layout_height="105dp"
@@ -32,7 +32,7 @@
             android:background="#00FF00" />
 
         <!-- Canvas 3 -->
-        <com.example.snakegame.graphics.MapCanvas
+        <com.example.snakegame.animations.MapView
             android:id="@+id/canvas3"
             android:layout_width="105dp"
             android:layout_height="105dp"

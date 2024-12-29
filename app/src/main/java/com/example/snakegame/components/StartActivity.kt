@@ -4,6 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import com.example.snakegame.R
+import com.example.snakegame.animations.MapView
 import com.example.snakegame.databinding.ActivityStartBinding
 import kotlin.system.exitProcess
 
