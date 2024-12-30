@@ -1,40 +1,35 @@
 package com.example.snakegame.engine
 
+import androidx.lifecycle.MutableLiveData
+
 
 class Game (var mapIndex: Int) {
     companion object{
         val boardSize: Int = 21
     }
     // state of the current game
-    var state: Int = 0          // 0: initial, 1: in-game, 2: pause, 3: end
     private var map = Map.mapMatrix[mapIndex]
-
-    var score = 0
+    var score = MutableLiveData<Int>()
     // objects of the game
     lateinit var snake: Snake
     lateinit var food: Food
-    //var updateDirection: String? = null
+    private val step = 1
+    // direction of snake
     var direction: String? = null
+    var redirection: String? = null
     init {
-        //for (row in map) {
-        //    for (i in row) {
-        //        print("$i ")
-        //    }
-        //    println()
-        //}
-        //_score.value = 0
         reset()
     }
 
     fun reset() {
-        score = 0
+        score.value = 0
         direction = null
         //updateDirection = null
-        initSnake()
-        generateFood()
+        releaseSnake()
+        spawnFood()
     }
 
-    private fun initSnake() {
+    private fun releaseSnake() {
         snake = Snake()
         var pixelX = 0
         var pixelY = 0
@@ -47,7 +42,7 @@ class Game (var mapIndex: Int) {
         snake.bodyParts.add(Pair(snake.headX, snake.headY))
     }
 
-    fun generateFood() {
+    fun spawnFood() {
         food = Food()
         var pixelX = 0
         var pixelY = 0
@@ -60,40 +55,52 @@ class Game (var mapIndex: Int) {
     }
 
     // process when snake turns
-    fun turn (updateDirection: String) {
-        val y = snake.headY.toInt()
-        val x = snake.headX.toInt()
-
-        if (updateDirection == "up" || updateDirection == "down") {
-            if (direction == "right") {
-                if (snake.headX - x > 0f) snake.headX = x + 1f
-                //else snake.headX = x.toFloat()
-            }
-            else if (direction == "left") {
-                if (snake.headX - x > 0f) snake.headX = x.toFloat()
-                //else snake.headX = x + 1f
-            }
-        } else {
-            if (direction == "down") {
-                if (snake.headY - y > 0f) snake.headY = y + 1f
-                //else snake.headY = y.toFloat()
-            }
-            else if (direction == "up") {
-                if (snake.headY - y > 0f) snake.headY = y.toFloat()
-                //else snake.headY = y+1f
-            }
-        }
-        direction = updateDirection
-
+    fun turn () {
+        direction = redirection
+        //val y = snake.headY.toInt()
+        //val x = snake.headX.toInt()
+        //if (redirection != direction) {
+        //    if (direction == null) direction = redirection
+        //    else {
+        //        if (direction == "up") {
+        //            if
+        //        }
+        //    }
+        //}
     }
 
+    fun move() {
+        when (direction) {
+            "up" -> {
+                snake.headY -= step
+                if (snake.headY < 0) snake.headY = boardSize - 1f
+            }
+            "down" -> {
+                snake.headY += step
+                if (snake.headY >= boardSize) snake.headY = 0f
+
+            }
+            "left" -> {
+                snake.headX -= step
+                if (snake.headX < 0) snake.headX = boardSize - 1f
+            }
+            "right" -> {
+                snake.headX += step
+                if (snake.headX >= boardSize) snake.headX = 0f
+
+            }
+
+        }
+    }
     fun checkWallCollision(): Boolean {
         return map[snake.headY.toInt()][snake.headX.toInt()] == 1
     }
 
-    fun checkEaten(): Boolean {
+    fun checkFoodEaten(): Boolean {
+
         if (snake.headX.toInt() == food.posX && snake.headY.toInt() == food.posY) {
-            //_score.value = _score.value?.plus(20)
+            val newScore = (score.value?: 0) + 20
+            score.postValue(newScore)
             return true
         }
         return false

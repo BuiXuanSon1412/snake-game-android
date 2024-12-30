@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">SnakeGame</string>
     <string name="play">Play</string>
-    <string name="quit">Quit</string>
+    <string name="exit">Exit</string>
     <string name="button_to_control_snake_move_right">Button to control Snake: move right</string>
     <string name="button_to_control_snake_move_up">Button to control Snake: move up</string>
     <string name="button_to_control_snake_move_left">Button to control Snake: move left</string>
@@ -10,6 +10,9 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="settings_game">SETTINGS</string>
-    <string name="continue_game">Continue</string>
+    <string name="resume_game">Resume</string>
     <string name="quit_game">Quit</string>
+    <string name="restart_game">Restart</string>
+    <string name="game_over">Game Over</string>
+    <string name="score_0">Score: 0</string>
 </resources>

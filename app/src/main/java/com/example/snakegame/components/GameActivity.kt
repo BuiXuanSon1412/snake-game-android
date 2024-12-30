@@ -1,9 +1,10 @@
 package com.example.snakegame.components
 
 import android.annotation.SuppressLint
-import android.content.pm.ActivityInfo
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
@@ -12,53 +13,57 @@ import com.example.snakegame.R
 import com.example.snakegame.databinding.ActivityGameBinding
 import com.example.snakegame.animations.GameView
 import com.example.snakegame.engine.Game
-import kotlinx.android.synthetic.main.activity_game.*
+import com.example.snakegame.utils.ScoreManager
+import kotlinx.android.synthetic.main.activity_game.scoreTextView
 import kotlinx.coroutines.*
 import kotlin.math.abs
 
-class GameActivity : AppCompatActivity(), SettingsFragment.OnResumeButtonClickListener {
+class GameActivity : AppCompatActivity(),
+    SettingFragment.GameResumeListener,
+    GameOverFragment.GameRestartListener,
+    GameView.GameOverListener {
     private lateinit var binding: ActivityGameBinding
     private lateinit var game: Game
-    private var lastTime: Long = 0
-    private val frameRate = 60
-    private var updateDirection: String? = null
+    private lateinit var gameView: GameView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityGameBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        //requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
-        //supportActionBar?.hide()
 
         // retrieve data from intent
-        val mapIndex = intent.getIntExtra("mapSelection", 0)
+        val mapIndex = intent.getIntExtra("mapIndex", 0)
         game = Game(mapIndex)
-        val gameView = GameView(this, null, game = game)
-
-        findViewById<FrameLayout>(R.id.game_view_container).addView(gameView)
+        gameView = GameView(this, null, game = game)
+        gameView.setGameOverListener(this)
+        binding.gameViewContainer.addView(gameView)
         gameView.invalidate()
 
+        game.score.observe(this) {
+            newScore -> scoreTextView.text = "Score: $newScore"
+        }
         // move the snake
-        CoroutineScope(Dispatchers.IO).launch {
+
+        CoroutineScope(Dispatchers.Default).launch {
             while (true) {
-                if (gameView.state == "paused") {
-
-                }
-                else if (gameView.updateAnimation(updateDirection)) {
-                    gameView.invalidate()
-                    //game speed in millisecond
-                    val currentTime = System.currentTimeMillis()
-                    val timeToWait = 1000 / frameRate - (currentTime - lastTime)
-                    if (timeToWait > 0) {
-                        delay(timeToWait)
+                if (gameView.state == "running") {
+                    //Log.d("Animation state", gameView.state)
+                    //if (gameView.state == "waiting") gameView.invalidate()
+                    if (gameView.updateAnimation()) {
+                        gameView.invalidate()
+                        //game speed in millisecond
+                        delay(200)          // need more fixes to get better rendering
                     }
-                    lastTime = currentTime
-                    updateDirection = null
-                }
-                else if (gameView.state == "waiting") {
-
+                    else {
+                        val highScore = ScoreManager.getHighScore(this@GameActivity)
+                        if (game.score.value!! > highScore) {
+                            ScoreManager.saveHighScore(this@GameActivity, game.score.value!!)
+                        }
+                    }
                 }
             }
         }
+
         open class OnSwipeTouchListener : View.OnTouchListener {
 
             private val gestureDetector = GestureDetector(GestureListener())
@@ -129,61 +134,63 @@ class GameActivity : AppCompatActivity(), SettingsFragment.OnResumeButtonClickLi
         gameView.setOnTouchListener(object : OnSwipeTouchListener() {
 
             override fun onSwipeLeft() {
-                game.state = 1
-                if (game.direction != "right")
-                    game.direction = "left"
+                if (gameView.state == "waiting") gameView.state = "running"
+                if (gameView.state == "running" && game.direction != "right")
+                    game.redirection = "left"
             }
 
             override fun onSwipeRight() {
-                game.state = 1
-                if (game.direction != "left")
-                    game.direction = "right"
+                if (gameView.state == "waiting") gameView.state = "running"
+                if (gameView.state == "running" && game.direction != "left")
+                    game.redirection = "right"
             }
 
             override fun onSwipeTop() {
-                game.state = 1
-                if (game.direction != "up")
-                    game.direction = "down"
+                if (gameView.state == "waiting") gameView.state = "running"
+                if (gameView.state == "running" && game.direction != "down")
+                    game.redirection = "up"
             }
             override fun onSwipeBottom() {
-                game.state = 1
-                if (game.direction != "down")
-                    game.direction = "up"
+                if (gameView.state == "waiting") gameView.state = "running"
+                if (gameView.state == "running" && game.direction != "up")
+                    game.redirection = "down"
             }
         })
         // button to control flow
         binding.buttonSettings.setOnClickListener {
             //game.state = 2
-            gameView.state = "paused"
-            openSettingsFragment()
+            if (gameView.state == "running") {
+                gameView.state = "idle"
+                openSettingsFragment()
+            }
         }
         binding.buttonUp.setOnClickListener {
-            //game.state = 1
-            if (game.direction != "down")
-                updateDirection = "up"
+            if (gameView.state == "waiting") gameView.state = "running"
+            if (gameView.state == "running" && game.direction != "down")
+                game.redirection = "up"
         }
         binding.buttonDown.setOnClickListener {
-            //game.state = 1
-            if (game.direction != "up")
-                updateDirection = "down"
+            if (gameView.state == "waiting") gameView.state = "running"
+            if (gameView.state == "running" && game.direction != "up")
+                game.redirection = "down"
         }
         binding.buttonLeft.setOnClickListener {
-            //game.state = 1
-            if (game.direction != "right")
-                updateDirection = "left"
+            if (gameView.state == "waiting") gameView.state = "running"
+            if (gameView.state == "running" && game.direction != "right")
+                game.redirection = "left"
         }
         binding.buttonRight.setOnClickListener {
-            //game.state = 1
-            if (game.direction != "left")
-                updateDirection = "right"
+            if (gameView.state == "waiting") gameView.state = "running"
+            if (gameView.state == "running" && game.direction != "left")
+                game.redirection = "right"
         }
 
     }
+
     // Method to replace the current fragment with SettingsFragment
     private fun openSettingsFragment() {
         // Create a new instance of the SettingsFragment
-        val settingsFragment = SettingsFragment()
-
+        val settingsFragment = SettingFragment()
         // Replace the current fragment with the new SettingsFragment
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, settingsFragment) // Replace with the container ID
@@ -191,9 +198,21 @@ class GameActivity : AppCompatActivity(), SettingsFragment.OnResumeButtonClickLi
             .commit()
     }
     override fun onResumeButtonClicked() {
-        val gameView = findViewById<FrameLayout>(R.id.game_view_container).getChildAt(0) as GameView
         gameView.state = "running"
     }
 
+    override fun onRestartButtonClicked() {
+        gameView.state = "waiting"
+        game.reset()
+        gameView.invalidate()
+    }
+    override fun onGameOver() {
+        val gameOverFragment = GameOverFragment()
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, gameOverFragment) // Replace with the container ID
+            //.addToBackStack(null) // Add this transaction to the back stack
+            .commit()
+
+    }
 
 }

@@ -7,23 +7,22 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.snakegame.R
-import com.example.snakegame.databinding.FragmentSettingsBinding
+import com.example.snakegame.databinding.FragmentSettingBinding
 
 
-class SettingsFragment : Fragment() {
-    private lateinit var binding: FragmentSettingsBinding
+class SettingFragment : Fragment() {
+    private lateinit var binding: FragmentSettingBinding
 
-    interface OnResumeButtonClickListener {
+    interface GameResumeListener {
         fun onResumeButtonClicked()
     }
 
-    private var listener: OnResumeButtonClickListener? = null
+    private var listener: GameResumeListener? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         // Ensure that the host Activity implements the interface
-        if (context is OnResumeButtonClickListener) {
+        if (context is GameResumeListener) {
             listener = context
         } else {
             throw ClassCastException("$context must implement OnButtonClickListener")
@@ -40,7 +39,7 @@ class SettingsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
-        binding = FragmentSettingsBinding.inflate(inflater, container, false)
+        binding = FragmentSettingBinding.inflate(inflater, container, false)
 
         binding.buttonQuit.setOnClickListener {
             val intent = Intent(requireContext(), StartActivity::class.java)
@@ -48,7 +47,7 @@ class SettingsFragment : Fragment() {
             startActivity(intent)
         }
 
-        binding.buttonContinue.setOnClickListener {
+        binding.buttonResume.setOnClickListener {
             listener?.onResumeButtonClicked()
             requireActivity().supportFragmentManager.beginTransaction()
                 .remove(this)

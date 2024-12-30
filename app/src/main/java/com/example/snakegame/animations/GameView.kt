@@ -22,7 +22,12 @@ class GameView @JvmOverloads constructor(
     private val game: Game
 ) : MapView(context, attrs, defStyleAttr) {
     // state of animation
-    var state: String? = null;
+    // waiting: before player starts to play the game
+    // idle: user pauses the game
+    // running: in-game
+    var state = "waiting";
+    private var gameOverListener: GameOverListener? = null
+
     init {
         // Add a pre-draw listener to the ViewTreeObserver
         viewTreeObserver.addOnPreDrawListener {
@@ -31,16 +36,10 @@ class GameView @JvmOverloads constructor(
         }
     }
 
-    init {
-
-    }
     @SuppressLint("DrawAllocation")
     override fun onDraw(canvas: Canvas) {
         mapIndex = game.mapIndex
         super.onDraw(canvas)
-        //println("Snake: ${game.snake.headX} ${game.snake.headY}")
-        //println("Food: ${game.food.posX} ${game.food.posY}")
-        //println("draw map index: ${mapIndex}")
         drawInstances(canvas)
 
     }
@@ -51,48 +50,69 @@ class GameView @JvmOverloads constructor(
     }
 
 
+
     private fun drawInstances(canvas: Canvas) {
         val snake = Paint()
         snake.color = Color.GREEN
 
         for (i in game.snake.bodyParts){
-            canvas.drawRect(
+            canvas.drawRoundRect(
                 pixelSize * i.first,
                 pixelSize * i.second,
                 pixelSize * i.first+ pixelSize,
                 pixelSize * i.second+ pixelSize,
+                pixelSize / 3f, pixelSize / 3f,
                 snake)
         }
 
         val food = Paint()
         food.color = Color.RED
-        canvas.drawRect(
+        canvas.drawRoundRect(
             pixelSize * game.food.posX,
             pixelSize * game.food.posY,
             pixelSize * game.food.posX + pixelSize,
             pixelSize * game.food.posY + pixelSize,
+            pixelSize / 2f, pixelSize / 2f,
             food)
     }
     // return true if need to render
     // return false if no need to render
-    fun updateAnimation(updateDirection: String?) : Boolean{
-        if (updateDirection != null) {
-            game.turn(updateDirection)
-            state = "running"
-        }
-        if (state == "running" && game.direction != null) {
-            game.snake.move(game.direction!!)
-
+    fun updateAnimation() : Boolean{
+        if (state == "running") {
+            game.turn()
+            game.move()
             if (!game.checkWallCollision()) {
-                game.snake.bodyParts.add(Pair(game.snake.headX, game.snake.headY))
-                if (game.checkEaten()) game.generateFood()
-                game.snake.bodyParts.removeAt(0)
+                game.snake.bodyParts.add(Pair(game.snake.headX , game.snake.headY))
+                if (game.checkFoodEaten()) {
+                    game.spawnFood()
+                }
+                else game.snake.bodyParts.removeAt(0)
+                return true
             }
-            return true
+            else {
+                //saveHighScore(this, game.score)
+                gameOver()
+                state = "idle"
+            }
         }
-        else state = "waiting"
-
         return false
     }
 
+    private fun saveHighScore(context: Context, highScore: Int) {
+        val sharedPreferences = context.getSharedPreferences("HighScorePrefs", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putInt("HIGH_SCORE", highScore)
+        editor.apply()
+    }
+    fun setGameOverListener(listener: GameOverListener) {
+        gameOverListener = listener
+    }
+
+    private fun gameOver() {
+        // Trigger the callback
+        gameOverListener?.onGameOver()
+    }
+    interface GameOverListener {
+        fun onGameOver()
+    }
 }
