@@ -21,7 +21,8 @@ class GameView @JvmOverloads constructor(
     defStyleAttr: Int = 0,
     private val game: Game
 ) : MapView(context, attrs, defStyleAttr) {
-    //var gameReady = false;
+    // state of animation
+    var state: String? = null;
     init {
         // Add a pre-draw listener to the ViewTreeObserver
         viewTreeObserver.addOnPreDrawListener {
@@ -72,17 +73,26 @@ class GameView @JvmOverloads constructor(
             pixelSize * game.food.posY + pixelSize,
             food)
     }
-    fun updateAnimation() {
-        if (game.direction != null) {
+    // return true if need to render
+    // return false if no need to render
+    fun updateAnimation(updateDirection: String?) : Boolean{
+        if (updateDirection != null) {
+            game.turn(updateDirection)
+            state = "running"
+        }
+        if (state == "running" && game.direction != null) {
             game.snake.move(game.direction!!)
 
-            game.snake.bodyParts.add(Pair(game.snake.headX, game.snake.headY))
-            if (game.checkEaten()) {
-                game.generateFood()
-            } else
+            if (!game.checkWallCollision()) {
+                game.snake.bodyParts.add(Pair(game.snake.headX, game.snake.headY))
+                if (game.checkEaten()) game.generateFood()
                 game.snake.bodyParts.removeAt(0)
-
+            }
+            return true
         }
+        else state = "waiting"
+
+        return false
     }
 
 }

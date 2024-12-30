@@ -13,6 +13,7 @@ class Game (var mapIndex: Int) {
     // objects of the game
     lateinit var snake: Snake
     lateinit var food: Food
+    //var updateDirection: String? = null
     var direction: String? = null
     init {
         //for (row in map) {
@@ -26,11 +27,14 @@ class Game (var mapIndex: Int) {
     }
 
     fun reset() {
+        score = 0
+        direction = null
+        //updateDirection = null
         initSnake()
         generateFood()
     }
 
-    fun initSnake() {
+    private fun initSnake() {
         snake = Snake()
         var pixelX = 0
         var pixelY = 0
@@ -55,24 +59,36 @@ class Game (var mapIndex: Int) {
         food.posY = pixelY
     }
 
-
-    fun checkCollided(): Boolean {
+    // process when snake turns
+    fun turn (updateDirection: String) {
         val y = snake.headY.toInt()
         val x = snake.headX.toInt()
-        if (direction == "up") {
-            if (snake.headX - x < 0.75f && y-1 >= 0 &&  map[y-1][x] == 1) return true
-            if (snake.headX - x > 0.75f && y-1 >= 0 && map[y-1][x+1] == 1) return true
-        } else if (direction == "down") {
-            if (snake.headX - x < 0.75f && y+1 < 21 && map[y+1][x] == 1) return true
-            if (snake.headX - x > 0.75f && x+1 < 21 && y+1 < 21 && map[y+1][x+1] == 1) return true
-        } else if (direction == "right") {
-            if (snake.headY - y < 0.75f && x+1 < 21 && map[y][x+1] == 1) return true
-            if (snake.headY - y > 0.75f && x+1 < 21 && y+1 < 21 && map[y+1][x+1] == 1) return true
-        } else if (direction == "left") {
-            if (snake.headY - y < 0.75f && x-1 >= 0 && map[y][x-1] == 1) return true
-            if (snake.headY - y > 0.75f && y+1 < 21 && x-1 >= 0 && map[y+1][x-1] == 1) return true
+
+        if (updateDirection == "up" || updateDirection == "down") {
+            if (direction == "right") {
+                if (snake.headX - x > 0f) snake.headX = x + 1f
+                //else snake.headX = x.toFloat()
+            }
+            else if (direction == "left") {
+                if (snake.headX - x > 0f) snake.headX = x.toFloat()
+                //else snake.headX = x + 1f
+            }
+        } else {
+            if (direction == "down") {
+                if (snake.headY - y > 0f) snake.headY = y + 1f
+                //else snake.headY = y.toFloat()
+            }
+            else if (direction == "up") {
+                if (snake.headY - y > 0f) snake.headY = y.toFloat()
+                //else snake.headY = y+1f
+            }
         }
-        return false
+        direction = updateDirection
+
+    }
+
+    fun checkWallCollision(): Boolean {
+        return map[snake.headY.toInt()][snake.headX.toInt()] == 1
     }
 
     fun checkEaten(): Boolean {

@@ -21,12 +21,13 @@ class GameActivity : AppCompatActivity() {
     private lateinit var game: Game
     private var lastTime: Long = 0
     private val frameRate = 60
+    private var updateDirection: String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityGameBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
-        supportActionBar?.hide()
+        //requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+        //supportActionBar?.hide()
 
         // retrieve data from intent
         val mapIndex = intent.getIntExtra("mapSelection", 0)
@@ -34,34 +35,23 @@ class GameActivity : AppCompatActivity() {
         val gameView = GameView(this, null, game = game)
         findViewById<FrameLayout>(R.id.game_view_container).addView(gameView)
         gameView.invalidate()
-        // transfer data to animation display
-        //val canvas = binding.canvas
-        //canvas.mapIndex = mapIndex
-        //canvas.game = Game(mapIndex)
-        //canvas.gameReady = true
-        //canvas.invalidate()
 
-        //val game = canvas.game
-        //game.score.observe(this, Observer { score -> scoreTextView.text = "Score: $score" })
         // move the snake
         CoroutineScope(Dispatchers.IO).launch {
-
             while (true) {
-                if (game.checkCollided()) {
-                    game.state = 3
-                    //openSettingsFragment()
-                }
-                if (game.state == 1) {
-                    gameView.updateAnimation()
-
-                    //game speed in millisecond
+                if (gameView.updateAnimation(updateDirection)) {
                     gameView.invalidate()
+                    //game speed in millisecond
                     val currentTime = System.currentTimeMillis()
                     val timeToWait = 1000 / frameRate - (currentTime - lastTime)
                     if (timeToWait > 0) {
                         delay(timeToWait)
                     }
                     lastTime = currentTime
+                    updateDirection = null
+                }
+                else if (gameView.state == "waiting") {
+
                 }
             }
         }
@@ -165,22 +155,22 @@ class GameActivity : AppCompatActivity() {
         binding.buttonUp.setOnClickListener {
             game.state = 1
             if (game.direction != "down")
-                game.direction = "up"
+                updateDirection = "up"
         }
         binding.buttonDown.setOnClickListener {
             game.state = 1
             if (game.direction != "up")
-                game.direction = "down"
+                updateDirection = "down"
         }
         binding.buttonLeft.setOnClickListener {
             game.state = 1
             if (game.direction != "right")
-                game.direction = "left"
+                updateDirection = "left"
         }
         binding.buttonRight.setOnClickListener {
             game.state = 1
             if (game.direction != "left")
-                game.direction = "right"
+                updateDirection = "right"
         }
 
     }
