@@ -16,7 +16,7 @@ import kotlinx.android.synthetic.main.activity_game.*
 import kotlinx.coroutines.*
 import kotlin.math.abs
 
-class GameActivity : AppCompatActivity() {
+class GameActivity : AppCompatActivity(), SettingsFragment.OnResumeButtonClickListener {
     private lateinit var binding: ActivityGameBinding
     private lateinit var game: Game
     private var lastTime: Long = 0
@@ -33,13 +33,17 @@ class GameActivity : AppCompatActivity() {
         val mapIndex = intent.getIntExtra("mapSelection", 0)
         game = Game(mapIndex)
         val gameView = GameView(this, null, game = game)
+
         findViewById<FrameLayout>(R.id.game_view_container).addView(gameView)
         gameView.invalidate()
 
         // move the snake
         CoroutineScope(Dispatchers.IO).launch {
             while (true) {
-                if (gameView.updateAnimation(updateDirection)) {
+                if (gameView.state == "paused") {
+
+                }
+                else if (gameView.updateAnimation(updateDirection)) {
                     gameView.invalidate()
                     //game speed in millisecond
                     val currentTime = System.currentTimeMillis()
@@ -149,26 +153,27 @@ class GameActivity : AppCompatActivity() {
         })
         // button to control flow
         binding.buttonSettings.setOnClickListener {
-            game.state = 2
+            //game.state = 2
+            gameView.state = "paused"
             openSettingsFragment()
         }
         binding.buttonUp.setOnClickListener {
-            game.state = 1
+            //game.state = 1
             if (game.direction != "down")
                 updateDirection = "up"
         }
         binding.buttonDown.setOnClickListener {
-            game.state = 1
+            //game.state = 1
             if (game.direction != "up")
                 updateDirection = "down"
         }
         binding.buttonLeft.setOnClickListener {
-            game.state = 1
+            //game.state = 1
             if (game.direction != "right")
                 updateDirection = "left"
         }
         binding.buttonRight.setOnClickListener {
-            game.state = 1
+            //game.state = 1
             if (game.direction != "left")
                 updateDirection = "right"
         }
@@ -185,5 +190,10 @@ class GameActivity : AppCompatActivity() {
             .addToBackStack(null) // Add this transaction to the back stack
             .commit()
     }
+    override fun onResumeButtonClicked() {
+        val gameView = findViewById<FrameLayout>(R.id.game_view_container).getChildAt(0) as GameView
+        gameView.state = "running"
+    }
+
 
 }
