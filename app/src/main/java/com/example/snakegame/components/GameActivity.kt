@@ -52,7 +52,7 @@ class GameActivity : AppCompatActivity(),
                     if (gameView.updateAnimation()) {
                         gameView.invalidate()
                         //game speed in millisecond
-                        delay(200)          // need more fixes to get better rendering
+                        delay(300)          // need more fixes to get better rendering
                     }
                     else {
                         val highScore = ScoreManager.getHighScore(this@GameActivity)
@@ -131,7 +131,8 @@ class GameActivity : AppCompatActivity(),
             open fun onSwipeTop() {}
             open fun onSwipeBottom() {}
         }
-        gameView.setOnTouchListener(object : OnSwipeTouchListener() {
+
+        binding.root.setOnTouchListener(object : OnSwipeTouchListener() {
 
             override fun onSwipeLeft() {
                 if (gameView.state == "waiting") gameView.state = "running"
@@ -147,19 +148,19 @@ class GameActivity : AppCompatActivity(),
 
             override fun onSwipeTop() {
                 if (gameView.state == "waiting") gameView.state = "running"
-                if (gameView.state == "running" && game.direction != "down")
-                    game.redirection = "up"
+                if (gameView.state == "running" && game.direction != "up")
+                    game.redirection = "down"
             }
             override fun onSwipeBottom() {
                 if (gameView.state == "waiting") gameView.state = "running"
-                if (gameView.state == "running" && game.direction != "up")
-                    game.redirection = "down"
+                if (gameView.state == "running" && game.direction != "down")
+                    game.redirection = "up"
             }
         })
         // button to control flow
         binding.buttonSettings.setOnClickListener {
             //game.state = 2
-            if (gameView.state == "running") {
+            if (gameView.state != "idle" ) {
                 gameView.state = "idle"
                 openSettingsFragment()
             }
@@ -194,7 +195,7 @@ class GameActivity : AppCompatActivity(),
         // Replace the current fragment with the new SettingsFragment
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, settingsFragment) // Replace with the container ID
-            .addToBackStack(null) // Add this transaction to the back stack
+            // .addToBackStack(null) // Add this transaction to the back stack
             .commit()
     }
     override fun onResumeButtonClicked() {

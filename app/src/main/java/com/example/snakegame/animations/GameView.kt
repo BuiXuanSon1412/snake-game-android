@@ -81,7 +81,7 @@ class GameView @JvmOverloads constructor(
         if (state == "running") {
             game.turn()
             game.move()
-            if (!game.checkWallCollision()) {
+            if (!game.checkWallCollision() && !game.checkSelfCollision()) {
                 game.snake.bodyParts.add(Pair(game.snake.headX , game.snake.headY))
                 if (game.checkFoodEaten()) {
                     game.spawnFood()

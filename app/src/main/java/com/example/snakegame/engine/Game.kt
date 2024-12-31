@@ -57,16 +57,6 @@ class Game (var mapIndex: Int) {
     // process when snake turns
     fun turn () {
         direction = redirection
-        //val y = snake.headY.toInt()
-        //val x = snake.headX.toInt()
-        //if (redirection != direction) {
-        //    if (direction == null) direction = redirection
-        //    else {
-        //        if (direction == "up") {
-        //            if
-        //        }
-        //    }
-        //}
     }
 
     fun move() {
@@ -78,7 +68,6 @@ class Game (var mapIndex: Int) {
             "down" -> {
                 snake.headY += step
                 if (snake.headY >= boardSize) snake.headY = 0f
-
             }
             "left" -> {
                 snake.headX -= step
@@ -87,13 +76,17 @@ class Game (var mapIndex: Int) {
             "right" -> {
                 snake.headX += step
                 if (snake.headX >= boardSize) snake.headX = 0f
-
             }
-
         }
     }
     fun checkWallCollision(): Boolean {
         return map[snake.headY.toInt()][snake.headX.toInt()] == 1
+    }
+    fun checkSelfCollision(): Boolean {
+        for (i in snake.bodyParts) {
+            if (snake.headX == i.first && snake.headY == i.second) return true
+        }
+        return false
     }
 
     fun checkFoodEaten(): Boolean {
