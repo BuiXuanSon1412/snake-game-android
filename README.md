@@ -3,9 +3,9 @@
 ## Introduction
 Classic Snake Game is written by Kotlin.
 ### Screenshot
-| ![Image 1](start.png) | ![Image 2](idle.png) | ![Image 3](over.png) |
+| ![Image 1](screenshot/start.png) | ![Image 2](screenshot/idle.png) | ![Image 3](screenshot/over.png) |
 |-------------------------|-------------------------|-------------------------|  
-| ![Image 1](map_0.png) | ![Image 2](map_1.png) | ![Image 3](map_2.png) |
+| ![Image 1](screenshot/map_0.png) | ![Image 2](screenshot/map_1.png) | ![Image 3](screenshot/map_2.png) |
 
 ### Description
 1. There are **3 map patterns**.
